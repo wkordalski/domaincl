@@ -8,7 +8,7 @@ Usage examples:
 
 vector addition
 ----------------
-```
+```c++
 int main()
 {
 	vector<float> a,b,c;
@@ -34,7 +34,7 @@ int main()
 
 Pi approximation
 -----------------
-```
+```c++
 int get_random()
 {
 	/* some RNG */
