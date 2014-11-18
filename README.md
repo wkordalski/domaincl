@@ -3,10 +3,10 @@ domaincl
 
 An OpenCL wrapper - DSL embedded in C++ for GPGPU purposes.
 
-Usage examples:
-===============
+Usage examples
+---------------
 
-vector addition:
+vector addition
 ----------------
 ```
 int main()
@@ -32,7 +32,7 @@ int main()
 }
 ```
 
-Pi approximation:
+Pi approximation
 -----------------
 ```
 int get_random()
