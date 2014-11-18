@@ -2,3 +2,80 @@ domaincl
 ========
 
 An OpenCL wrapper - DSL embedded in C++ for GPGPU purposes.
+
+Usage examples:
+==================
+
+vector addition:
+----------------
+```
+int main()
+{
+	vector<float> a,b,c;
+	a.resize(100,0);
+	b.resize(100,0);
+	c.resize(100,0);
+	/* some initialisation */
+	function<void(val)> f = [&](val i)
+	{
+		val _a = a;
+		val _b = b;
+		val _c = c;
+		_c[i] = a[i] + b[i]
+	};
+	kernel k = f;
+	k.copyin();
+	k.run(100);
+	k.copyout();
+	for(int i=0;i<100;++i)
+	cout<<c[i]<<" ";
+}
+```
+
+Pi approximation:
+-----------------
+```
+int get_random()
+{
+	/* some RNG */
+}
+
+val next_rand(val a)
+{
+	/* some PRNG */
+}
+
+const int MAX_NEXT_RAND;
+
+int main()
+{
+	vector<int> rands(100,0);
+	for(int i=0;i<100;++i)
+	rands[i] = get_random();
+	vector<int> cnts(100,0);
+	function<void(int)> f = [&](val i)
+	{
+		val _rands = rands;
+		val wyn = cnts;
+		val r = _rands[i]
+		For(j,0,200) DO(
+			val x = r/MAX_NEXT_RAND;
+			r = next_rand(r);
+			val y = r/MAX_NEXT_RAND;
+			If(x*x+y*y<=1) DO(
+				wyn[i] += 1;
+			)
+			r = next_rand(r);
+		)
+	};
+	kernel k = f;
+	k.copyin();
+	k.run(100);
+	k.copyout();
+	int cnt = 0;
+	for(int i=0;i<100;++i)
+	cnt += cnts[i];
+	
+	cout<<" Pi = "<< double(cnt)/(100.0*200.0);
+}
+```
