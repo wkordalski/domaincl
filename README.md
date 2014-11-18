@@ -15,7 +15,7 @@ int main()
 	a.resize(100,0);
 	b.resize(100,0);
 	c.resize(100,0);
-	/* some initialisation */
+	/* ...some initialisation here... */
 	function<void(val)> f = [&](val i)
 	{
 		val _a = a;
@@ -50,9 +50,11 @@ const int MAX_NEXT_RAND;
 int main()
 {
 	vector<int> rands(100,0);
+	vector<int> cnts(100,0);
+	
 	for(int i=0;i<100;++i)
 	rands[i] = get_random();
-	vector<int> cnts(100,0);
+	
 	function<void(val)> f = [&](val i)
 	{
 		val _rands = rands;
@@ -68,10 +70,12 @@ int main()
 			r = next_rand(r);
 		)
 	};
+	
 	kernel k = f;
 	k.copyin();
 	k.run(100);
 	k.copyout();
+	
 	int cnt = 0;
 	for(int i=0;i<100;++i)
 	cnt += cnts[i];
