@@ -33,7 +33,7 @@ int main()
 ```
 
 #### Pi approximation
------------------
+
 ```c++
 int get_random()
 {
