@@ -6,8 +6,8 @@ An OpenCL wrapper - DSL embedded in C++ for GPGPU purposes.
 Usage examples:
 ---------------
 
-vector addition
-----------------
+#### vector addition
+
 ```c++
 int main()
 {
@@ -32,7 +32,7 @@ int main()
 }
 ```
 
-Pi approximation
+#### Pi approximation
 -----------------
 ```c++
 int get_random()
