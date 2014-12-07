@@ -25,23 +25,26 @@ namespace domaincl
 	namespace dsl
 	{
 		using namespace translator;
-		
+		#define DO(c) ([&](int line_end){val::open_block(DOMAINCL_INTERNAL_MACRO_LINE,line_end);{c};val::close_block();})(DOMAINCL_INTERNAL_MACRO_LINE);
+		#define DOMAINCL_INTERNAL_MACRO_LINE __LINE__
 		class val
 		{
 			id_t nm;
 			static env* e;
 			friend class kernel;
+			friend class if_type;
 			val(id_t i):nm(i){}
 			static val get_global_id(int a)
 			{
 				return e->gen_getglobalid(a);
 			}
-			operator id_t()
+			operator id_t() const
 			{
 				return nm;
 			}
 			
 			public:
+			
 			val(vector<int>&v)
 			{
 				nm = e->eat(v);
@@ -121,6 +124,15 @@ namespace domaincl
 			{
 				return e->gen_binop(nm,"<",a);
 			}
+			
+			static void open_block(int l_start, int l_end)
+			{
+				e->open_block(l_start, l_end);
+			}
+			static void close_block()
+			{
+				e->close_block();
+			} 
 		};
 		env* val::e = NULL;
 		
@@ -137,7 +149,20 @@ namespace domaincl
 				en = new env();
 				gpu = new api_abstr::scope("gpu");
 				val::e = en;
-				f(val::get_global_id(0));
+				//try
+				{
+					f(val::get_global_id(0));
+				}
+				/*
+				catch (error e)
+				{
+					string msg = "an error occured during compilation\n";
+					msg += en->get_opened_blocks();
+					msg += e.message;
+					cerr<<msg<<endl;
+					exit(0);
+				}
+				*/
 				val::e = NULL;
 				extents.push_back(id_t::generate().str());
 				string c = en->get_code();
@@ -165,6 +190,22 @@ namespace domaincl
 				else throw UNIMPL;
 			}
 		};
+		
+		class if_type
+		{
+			public:
+			function<function<void(int)>(function<void(int)>)> operator()(val cond){
+				return [=](function<void(int)> block)
+				{
+					return [=](int line)
+					{
+						val::e->gen_if(cond);
+						block(line);
+					};
+				};
+			}
+		}If;
+		
 		
 	}
 }

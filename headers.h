@@ -22,19 +22,25 @@
 #include<map>
 #include<algorithm>
 #include<CL/cl.h>
+#include<cstdlib>
+#include<sstream>
 
 using namespace std;
 //#define D(a) (cout<<#a<<" = "<<(a)<<endl,(a))
 #define D(a) (a)
 
-#define ERROR(a) (cout<<(a)<<endl,(a))
+#define ERROR(a)  (error(a))/*(cout<<(a)<<endl,(a))*/
 #define WTF ERROR("What a terrible failure!");
 #define UNIMPL ERROR("Unimplemented!");
 
 class error
 {
 	public:
-	error(string s){}
+	string message;
+	error(string s)
+	{
+		message = s;
+	}
 };
 
 #endif

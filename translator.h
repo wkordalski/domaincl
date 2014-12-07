@@ -68,6 +68,8 @@ namespace domaincl
 		{
 			vector<string> v;
 			vector<bool> scolon; //czy dodać średnik po instr
+			vector<pair<int,int> > blocks;
+			friend class env;
 			public:
 			void add(string i)
 			{
@@ -79,15 +81,17 @@ namespace domaincl
 				v.push_back("if("+cond+")");
 				scolon.push_back(false);
 			}
-			void open()
+			void open(int l_start, int l_end)
 			{
 				v.push_back("{");
 				scolon.push_back(false);
+				blocks.push_back(make_pair(l_start, l_end));
 			}
 			void close()
 			{
 				v.push_back("}");
 				scolon.push_back(false);
+				blocks.pop_back();
 			}
 			void add_else()
 			{
@@ -247,7 +251,7 @@ namespace domaincl
 			{
 				if(t.name == "int" && name == "int")
 				{
-					if(op == "+" || op == "-" || op == "/" || op == "%" || op == "*") return mk_valtype("int");
+					if(op == "+" || op == "-" || op == "/" || op == "%" || op == "*" || op == "==") return mk_valtype("int");
 					else throw ERROR("Unknown operator"); //FIXME
 				}
 				if(t.name == "float" && name == "float")
@@ -578,13 +582,13 @@ namespace domaincl
 					// parametry fora:
 					// - albo for(i,start,end) // i - ref lub varref
 					// - albo for(i,v)  // i - j.w. , v - vector
-			void open_block()
+			void open_block(int l_start, int l_end)
 			{
-				
+				outcode.open(l_start, l_end);
 			}
 			void close_block()
 			{
-				
+				outcode.close();
 			}
 			
 			// inne:
@@ -613,6 +617,17 @@ namespace domaincl
 			string get_code()
 			{
 				return outcode.get_code();
+			}
+			
+			string get_opened_blocks()
+			{
+				ostringstream wyn;
+				for(int i = int(outcode.blocks.size())-1 ; i>=0 ; --i)
+				{
+					wyn << "in block [" << outcode.blocks[i].first << " .. " << outcode.blocks[i].second << "]\n";
+				}
+				
+				return wyn.str();
 			}
 			
 		};

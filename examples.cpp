@@ -57,13 +57,23 @@ namespace dsl_example
 	{
 		using namespace dsl;
 		vector<int> a,b,c;
+		float wsp_glob = 10.3;
+		int func_const1 = 25;
+		int func_const2 = 999999;
 		auto func = [&](val i)
 		{
+			DO(
 			val aa = a;
 			val bb = b;
 			val cc = c;
-			cc[i] = aa[i] * bb[i];
-			
+			val wsp = wsp_glob;
+			DO(
+				cc[i] = aa[i] * bb[i];
+				If(cc[i] == val(func_const1)) DO(
+					cc[i] = val(func_const2);
+				)
+			)
+			)
 		};
 		kernel k = function<void(val)>(func);
 		a.resize(10,0);
