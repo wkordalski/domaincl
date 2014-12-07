@@ -33,6 +33,8 @@ namespace domaincl
 			static env* e;
 			friend class kernel;
 			friend class if_type;
+			friend class else_type;
+			friend class for_type;
 			val(id_t i):nm(i){}
 			static val get_global_id(int a)
 			{
@@ -50,9 +52,25 @@ namespace domaincl
 				nm = e->eat(v);
 			}
 			val(vector<float>&v):nm(e->eat(v)){}
-			val(int& v):nm(e->eat(v)){}
-			val(float& v):nm(e->eat(v)){}
+			//FIXME FIXME
+			//val(int& v):nm(e->eat(v)){}
+			//val(float& v):nm(e->eat(v)){}
 			val(const val&v):nm(v.nm){}
+			
+			//FIXME FIXME:
+			val(int a)
+			{
+				int* ptr = new int;
+				*ptr = a;
+				nm = e->eat(*ptr);
+			}
+			//FIXME FIXME:
+			val(float a)
+			{
+				float* ptr = new float;
+				*ptr = a;
+				nm = e->eat(*ptr);
+			}
 			
 			val operator[](val a)
 			{
@@ -206,6 +224,33 @@ namespace domaincl
 			}
 		}If;
 		
+		class else_type
+		{
+			public:
+			function<void(int)> operator()(function<void(int)> block)
+			{
+				return [=](int line)
+				{
+					val::e->gen_else();
+					block(line);
+				};
+			}
+		}Else;
+		
+		class for_type
+		{
+			public:
+			function<function<void(int)>(function<void(int)>)> operator()(val it, val start, val end){
+				return [=](function<void(int)> block)
+				{
+					return [=](int line)
+					{
+						val::e->gen_for(it, start, end);
+						block(line);
+					};
+				};
+			}
+		}For;
 		
 	}
 }

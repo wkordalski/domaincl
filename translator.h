@@ -99,7 +99,11 @@ namespace domaincl
 				scolon.push_back(false);
 			}
 			
-			void add_for();//TODO
+			void add_for(string it, string p, string q)
+			{
+				v.push_back("for("+it+" = "+p+"; "+it+" <= "+q+"; ++"+it+")");
+				scolon.push_back(false);
+			}
 			
 			void add_while(); //TODO
 			// pętlę while wbrew pozorom da się zrobić, tylko w tym vectorze instr.
@@ -572,13 +576,20 @@ namespace domaincl
 			// struktury kontrolne:
 			void gen_if(id_t a)
 			{
-				
+				outcode.add_if(a.str());
 			}
 			void gen_else()
 			{
-				
+				outcode.add_else();
 			}
-			void gen_for(); //TODO: rozkminić parametry tego
+			void gen_for(id_t it, id_t p, id_t q)
+			{
+				// FIXME FIXME: nie zawsze trzeba robić gen_copy (jak jest to stała, a nie adres, to można ją po prostu wrzucić)
+				id_t pp = gen_copy(p);
+				id_t qq = gen_copy(q);
+				outcode.add_for(it.str(), pp.str(), qq.str());
+			}
+					//TODO: rozkminić parametry tego
 					// parametry fora:
 					// - albo for(i,start,end) // i - ref lub varref
 					// - albo for(i,v)  // i - j.w. , v - vector

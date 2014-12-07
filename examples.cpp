@@ -66,11 +66,16 @@ namespace dsl_example
 			val aa = a;
 			val bb = b;
 			val cc = c;
-			val wsp = wsp_glob;
+			val j = val(0)+val(0);
 			DO(
-				cc[i] = aa[i] * bb[i];
-				If(cc[i] == val(func_const1)) DO(
-					cc[i] = val(func_const2);
+				cc[i] = aa[i] + bb[i];
+				If(cc[i] == val(10)) DO(
+					cc[i] = val(999999);
+				) Else DO(
+					cc[i] = 0;
+					For(j, 1, aa[i]) DO(
+						cc[i] = cc[i] + aa[i];
+					)
 				)
 			)
 			)
