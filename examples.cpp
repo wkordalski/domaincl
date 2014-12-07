@@ -1,6 +1,20 @@
-#include "headers.cpp"
-#include "api_abstr.cpp"
-#include "dsl.cpp"
+/**
+	Copyright (C) 2014 Franciszek Piszcz
+	
+	Distributed under the GNU Lesser General Public License, version 3
+	
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+#include "headers.h"
+#include "api_abstr.h"
+#include "dsl.h"
 
 using namespace domaincl;
 namespace api_abstr_example
