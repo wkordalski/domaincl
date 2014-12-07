@@ -1,6 +1,5 @@
 domaincl
 ========
-<<<<<<< HEAD
 
 An OpenCL wrapper - DSL embedded in C++ for GPGPU purposes.
 
@@ -84,5 +83,4 @@ int main()
 	cout << " Pi = " << double(cnt)/(100.0*500.0) << endl;
 }
 ```
-=======
->>>>>>> 08f8b0bfb927e1178023a6fdbf9707de8d85dfe2
+
