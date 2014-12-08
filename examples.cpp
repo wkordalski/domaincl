@@ -93,7 +93,7 @@ namespace domaincl_examples
 	        var j = var(0);
 	        For(j,1,1000) DO(
 					
-					var x = next_rand(r);
+	            var x = next_rand(r);
 	            var y = next_rand(r);
 	            
 	            If(x*x+y*y <= MAX_NEXT_RAND*MAX_NEXT_RAND) DO(
