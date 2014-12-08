@@ -88,16 +88,16 @@ namespace domaincl_examples
 	    function<void(val)> f = [&](val i)
 	    {
 	        val _rands = rands;
-	        val wyn = cnts;
+	        val _cnts = cnts;
 	        var r = _rands[i];
-	        var j = var(0);
+	        var j = val(0);
 	        For(j,1,1000) DO(
 					
 	            var x = next_rand(r);
 	            var y = next_rand(r);
 	            
 	            If(x*x+y*y <= MAX_NEXT_RAND*MAX_NEXT_RAND) DO(
-	                wyn[i] = wyn[i] + 1;
+	                _cnts[i] = _cnts[i] + 1;
 	            )
 	        )
 	    };
