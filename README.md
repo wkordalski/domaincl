@@ -1,7 +1,18 @@
 domaincl
 ========
 
-An OpenCL wrapper - DSL embedded in C++ for GPGPU purposes.
+An OpenCL wrapper - domain specific language embedded in C++ for GPGPU purposes.
+This is an early prorotype, however it already works on small programs.
+It provides types 'val' and 'var' wchich are essentially
+nodes of the AST. User writes a kernel that is operating on these types.
+The library takes this kernel, applies it to object of type 'val' and as a result gets
+the AST of that kernel. Then it transforms it to the OpenCL C and runs.
+See usage examples for more info.
+
+dependencies:
+-------------
+You need to have OpenCL installed on your computer and a C++ compiler
+wchich supports C++11 (it compiles under gcc 4.7.2 for example).
 
 Usage examples:
 ---------------
@@ -35,52 +46,66 @@ int main()
 #### Pi approximation
 
 ```c++
+const int MAX_NEXT_RAND = 1007;
+	
 int get_random()
 {
-	/* some RNG */
+    /* some RNG */
+    return rand() % MAX_NEXT_RAND;
 }
-
-val next_rand(val a)
+	val next_rand(val a)
 {
 	/* some PRNG */
-}
-
-const int MAX_NEXT_RAND;
-
-int main()
-{
-	vector<int> rands(100,0);
-	vector<int> cnts(100,0);
-	
-	for(int i=0;i<100;++i)
-	rands[i] = get_random();
-	
-	function<void(val)> f = [&](val i)
+	int d = 10;
+	var wyn = 0;
+	while(d--)
 	{
-		val _rands = rands;
-		val wyn = cnts;
-		val r = _rands[i];
-		For(j,0,500) DO(
-			val x = r;
-			r = next_rand(r);
-			val y = r;
-			If(x*x+y*y <= MAX_NEXT_RAND*MAX_NEXT_RAND) DO(
-				wyn[i] += 1;
-			)
-			r = next_rand(r);
-		)
-	};
+		wyn = wyn * 4;
+		wyn = wyn + a % 4;
+		a = a*a % MAX_NEXT_RAND;
+	}
+	return wyn % MAX_NEXT_RAND;
+}
 	
-	kernel k = f;
-	k.copyin();
-	k.run(100);
-	k.copyout();
-	
-	int cnt = 0;
-	for(int i=0;i<100;++i)
-	cnt += cnts[i];
-	
-	cout << " Pi = " << double(cnt)/(100.0*500.0) << endl;
+void pi_approximation()
+{
+    vector<int> rands(100,0);
+    vector<int> cnts(100,0);
+
+    for(int i=0;i<100;++i)
+    rands[i] = get_random();
+
+    function<void(val)> f = [&](val i)
+    {
+        val _rands = rands;
+        val _cnts = cnts;
+        var r = _rands[i];
+        var j = val(0);
+        For(j,1,1000) DO(
+				
+            var x = next_rand(r);
+            var y = next_rand(r);
+            
+            If(x*x+y*y <= MAX_NEXT_RAND*MAX_NEXT_RAND) DO(
+                _cnts[i] = _cnts[i] + 1;
+            )
+        )
+    };
+
+    kernel k = f;
+    k.copyin();
+    k.run(100);
+    k.copyout();
+    //cout<<"cnts = ";
+    int cnt = 0;
+    for(int i=0;i<100;++i)
+    {
+    	cnt += cnts[i];
+    	//cout<<cnts[i]<<" ";
+    }
+    //cout<<endl;
+
+    cout << " Pi = " << 4 * double(cnt)/(100.0*1000.0) << endl;
 }
 ```
 
