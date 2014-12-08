@@ -17,7 +17,7 @@
 #include "dsl.h"
 
 using namespace domaincl;
-namespace api_abstr_example
+namespace api_abstr_test
 {
 	void run()
 	{
@@ -51,7 +51,7 @@ namespace api_abstr_example
 	}
 }
 
-namespace dsl_example
+namespace dsl_test
 {
 	void run()
 	{
@@ -66,7 +66,7 @@ namespace dsl_example
 			val aa = a;
 			val bb = b;
 			val cc = c;
-			val j = val(0)+val(0);
+			var j = 0;
 			DO(
 				cc[i] = aa[i] + bb[i];
 				If(cc[i] == val(10)) DO(
@@ -100,6 +100,6 @@ namespace dsl_example
 
 int main()
 {
-	dsl_example::run();
+	dsl_test::run();
 	return 0;
 }

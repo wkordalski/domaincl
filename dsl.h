@@ -25,27 +25,31 @@ namespace domaincl
 	namespace dsl
 	{
 		using namespace translator;
-		#define DO(c) ([&](int line_end){val::open_block(DOMAINCL_INTERNAL_MACRO_LINE,line_end);{c};val::close_block();})(DOMAINCL_INTERNAL_MACRO_LINE);
-		#define DOMAINCL_INTERNAL_MACRO_LINE __LINE__
+		
+		#define DO(c) ([&](int line_end){val::open_block(__LINE__, line_end);{c};val::close_block();})(__LINE__);
+		
 		class val
 		{
+			protected:
+			
 			id_t nm;
 			static env* e;
 			friend class kernel;
 			friend class if_type;
 			friend class else_type;
 			friend class for_type;
-			val(id_t i):nm(i){}
+			val(id_t i=id_t()):nm(i){}
 			static val get_global_id(int a)
 			{
 				return e->gen_getglobalid(a);
 			}
+			
+			public:
+			
 			operator id_t() const
 			{
 				return nm;
 			}
-			
-			public:
 			
 			val(vector<int>&v)
 			{
@@ -153,6 +157,23 @@ namespace domaincl
 			} 
 		};
 		env* val::e = NULL;
+		
+		class var : public val
+		{
+			void copy()
+			{
+				val::nm = e->gen_copy(id_t(val::nm));
+			}
+			public:
+			var(val a)
+			{
+				val::nm = e->gen_copy(id_t(a));
+			}
+			var(int a):val(a){copy();}
+			var(float a):val(a){copy();}
+			var(vector<int>& a):val(a){copy();}
+			var(vector<float>& a):val(a){copy();}
+		};
 		
 		class kernel
 		{

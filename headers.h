@@ -32,6 +32,8 @@ using namespace std;
 #define ERROR(a)  (error(a))/*(cout<<(a)<<endl,(a))*/
 #define WTF ERROR("What a terrible failure!");
 #define UNIMPL ERROR("Unimplemented!");
+#define DEBUG_MODE false
+
 
 class error
 {
@@ -40,6 +42,7 @@ class error
 	error(string s)
 	{
 		message = s;
+		cerr<<"ERROR: "<<s<<endl;
 	}
 };
 

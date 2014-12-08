@@ -255,7 +255,7 @@ namespace domaincl
 			{
 				if(t.name == "int" && name == "int")
 				{
-					if(op == "+" || op == "-" || op == "/" || op == "%" || op == "*" || op == "==") return mk_valtype("int");
+					if(op == "+" || op == "-" || op == "/" || op == "%" || op == "*" || op == "==" || op == "<=") return mk_valtype("int");
 					else throw ERROR("Unknown operator"); //FIXME
 				}
 				if(t.name == "float" && name == "float")

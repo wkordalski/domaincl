@@ -17,70 +17,27 @@
 #include "dsl.h"
 
 using namespace domaincl;
-namespace api_abstr_example
-{
-	void run()
-	{
-		using namespace api_abstr;
-		scope gpu("GPU");
-		vector<int> v1(30),v2(30),v3(30);
-		for(int i=0;i<v1.size();++i)
-		{
-			v1[i] = i % 10;
-			v2[i] = i % 10;
-			v3[i] = 0;
-		}
-		gpu.send_buf("_v1",(void*)&(v1[0]),v1.size()*sizeof(int));
-		gpu.send_buf("_v2",(void*)&(v2[0]),v2.size()*sizeof(int));
-		gpu.send_buf("_v3",(void*)&(v3[0]),v3.size()*sizeof(int));
-		gpu.send_int("size",v1.size());
-		#define STRINGIFY(a) #a
-		string kod = STRINGIFY(
-			__global int* v1 = (__global int*)_v1;
-			__global int* v2 = (__global int*)_v2;
-			__global int* v3 = (__global int*)_v3;
-			v3[i] = v1[i] + v2[i];
-		);
-		#undef STRINGFY
-		gpu.compile_prog("vec_add",make_pair((string)"i",(string)"size"),kod);
-		gpu.run_prog("vec_add");
-		gpu.fetch_buf("_v3",(void*)&(v3[0]));
-		for(int i=0;i<v3.size();++i)
-		cout<<v3[i]<<" ";
-		cout<<endl;
-	}
-}
 
-namespace dsl_example
+namespace domaincl_examples
 {
-	void run()
+
+	using namespace dsl;
+
+	void vector_add()
 	{
-		using namespace dsl;
 		vector<int> a,b,c;
-		float wsp_glob = 10.3;
-		int func_const1 = 25;
-		int func_const2 = 999999;
 		auto func = [&](val i)
 		{
-			DO(
-			val aa = a;
-			val bb = b;
-			val cc = c;
-			val j = val(0)+val(0);
-			DO(
-				cc[i] = aa[i] + bb[i];
-				If(cc[i] == val(10)) DO(
-					cc[i] = val(999999);
-				) Else DO(
-					cc[i] = 0;
-					For(j, 1, aa[i]) DO(
-						cc[i] = cc[i] + aa[i];
-					)
-				)
-			)
-			)
+			//import the data:
+			val _a = a;
+			val _b = b;
+			val _c = c;
+			//compute:
+			_c[i] = _a[i] + _b[i];
 		};
+		//compile the kernel:
 		kernel k = function<void(val)>(func);
+		//some initialisation:
 		a.resize(10,0);
 		b.resize(10,0);
 		c.resize(10,0);
@@ -89,6 +46,7 @@ namespace dsl_example
 			a[i] = i;
 			b[i] = i;
 		}
+		//move the data and run:
 		k.copyin();
 		k.run(10);
 		k.copyout();
@@ -96,10 +54,76 @@ namespace dsl_example
 		cout<<c[i]<<" ";
 		cout<<endl;
 	}
+	
+	const int MAX_NEXT_RAND = 1007;
+	
+	int get_random()
+	{
+	    /* some RNG */
+	    return rand() % MAX_NEXT_RAND;
+	}
+
+	val next_rand(val a)
+	{
+		/* some PRNG */
+		int d = 10;
+		var wyn = 0;
+		while(d--)
+		{
+			wyn = wyn * 4;
+			wyn = wyn + a % 4;
+			a = a*a % MAX_NEXT_RAND;
+		}
+		return wyn % MAX_NEXT_RAND;
+	}
+	
+	void pi_approximation()
+	{
+	    vector<int> rands(100,0);
+	    vector<int> cnts(100,0);
+	
+	    for(int i=0;i<100;++i)
+	    rands[i] = get_random();
+	
+	    function<void(val)> f = [&](val i)
+	    {
+	        val _rands = rands;
+	        val wyn = cnts;
+	        var r = _rands[i];
+	        var j = var(0);
+	        For(j,1,1000) DO(
+					
+					var x = next_rand(r);
+	            var y = next_rand(r);
+	            
+	            If(x*x+y*y <= MAX_NEXT_RAND*MAX_NEXT_RAND) DO(
+	                wyn[i] = wyn[i] + 1;
+	            )
+	        )
+	    };
+	
+	    kernel k = f;
+	    k.copyin();
+	    k.run(100);
+	    k.copyout();
+		
+		
+		 //cout<<"cnts = ";
+	    int cnt = 0;
+	    for(int i=0;i<100;++i)
+	    {
+	    	cnt += cnts[i];
+	    	//cout<<cnts[i]<<" ";
+	    }
+	    //cout<<endl;
+	
+	    cout << " Pi = " << 4 * double(cnt)/(100.0*1000.0) << endl;
+	}
+
 }
 
 int main()
 {
-	dsl_example::run();
+	domaincl_examples::pi_approximation();
 	return 0;
 }

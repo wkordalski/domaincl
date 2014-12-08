@@ -285,7 +285,7 @@ namespace domaincl
 				p.program = clCreateProgramWithSource(hw.context, 1, 
 				(const char **)(&source_ptr), (const size_t *)&source_size, &ret);
 				ret = clBuildProgram(p.program, 1, &(hw.device_id), NULL, NULL, NULL);
-				if(ret != CL_SUCCESS || true) // FIXME FIXME
+				if(ret != CL_SUCCESS || DEBUG_MODE) // FIXME FIXME
 				{
 					print_compile_error(p.program,code_out);
 					//throw ERROR("error during clBuildProgram");
