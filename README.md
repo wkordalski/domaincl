@@ -3,7 +3,7 @@ domaincl
 
 An OpenCL wrapper - domain specific language embedded in C++ for GPGPU purposes.
 This is an early prorotype, however it already works on small programs.
-It provides types 'val' and 'var' wchich are essentially
+It provides types 'val' and 'var' which are essentially
 nodes of the AST. User writes a kernel that is operating on these types.
 The library takes this kernel, applies it to object of type 'val' and as a result gets
 the AST of that kernel. Then it transforms it to the OpenCL C and runs.
